@@ -10,13 +10,11 @@ export function ApplicationShell() {
     <div className="studio-shell">
       <a className="skip-link" href="#main-content">Skip to content</a>
       <aside className="global-navigator" aria-label="Global navigator">
-        <div className="brand">
-          <span className="brand-mark" aria-hidden="true">∞</span>
-          <div>
-            <strong>INFINICORECIPHER</strong>
-            <span>Studio Publishing</span>
-          </div>
-        </div>
+        <img
+          className="brand-logo"
+          src="/logo.svg"
+          alt="INFINICORECIPHER Studio Publishing"
+        />
         <nav aria-label="Workspace and system">
           {NAVIGATOR_ITEMS.map((item) => item.available ? (
             <div key={item.path}>

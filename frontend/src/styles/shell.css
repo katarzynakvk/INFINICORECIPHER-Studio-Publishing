@@ -8,10 +8,7 @@ button, a, input, select { outline-offset: 3px; }
 .studio-shell { min-height: 100vh; display: grid; grid-template-columns: var(--nav-width) minmax(0, 1fr); }
 .global-navigator { background: var(--ink); color: #fff; padding: 24px 16px; }
 .global-navigator nav { display: flex; flex-direction: column; gap: 2px; }
-.brand { display: flex; align-items: center; gap: 12px; padding: 0 8px 26px; }
-.brand-mark { color: var(--gold); font-family: Georgia, serif; font-size: 45px; line-height: 1; }
-.brand strong { display: block; font-family: Georgia, serif; font-size: 13px; letter-spacing: .06em; }
-.brand div > span { display: block; margin-top: 3px; font-family: Georgia, serif; font-size: 13px; font-style: italic; }
+.brand-logo { display: block; width: 100%; height: auto; margin: 0 0 26px; }
 .navigator-heading { display: flex; align-items: center; gap: 12px; margin: 12px 8px 8px; color: #e8e7ed; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 .navigator-heading::after { content: ""; height: 1px; flex: 1; background: #777989; }
 .navigator-item { color: #f5f4f7; text-decoration: none; display: grid; grid-template-columns: 30px 1fr; align-items: center; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 14px; line-height: 1.25; }
@@ -61,7 +58,7 @@ button:disabled { opacity: .65; cursor: wait; }
 @media (max-width: 760px) {
   .studio-shell { display: block; }
   .global-navigator { padding: 16px; }
-  .brand { padding-bottom: 12px; }
+  .brand-logo { margin-bottom: 12px; }
   .global-navigator nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2px 8px; }
   .navigator-heading { margin-top: 8px; }
   .command-bar { padding: 12px 20px; }
