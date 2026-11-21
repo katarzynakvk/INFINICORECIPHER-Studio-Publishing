@@ -1,35 +1,359 @@
-* { box-sizing: border-box; }
-body { margin: 0; }
-button, input, select { font: inherit; }
-.studio-shell { min-height: 100vh; display: grid; grid-template-columns: var(--nav-width) 1fr; }
-.global-navigator { background: #172231; color: #fff; padding: 20px 12px; }
-.global-navigator nav { display: flex; flex-direction: column; gap: 2px; }
-.brand-logo { display: block; width: 100%; height: auto; margin: 8px 0 22px; }
-.navigator-item { color: #dce4ee; text-decoration: none; display: grid; grid-template-columns: 34px 1fr; padding: 9px 10px; border-radius: 4px; }
-.navigator-item span { color: #93a4b8; }
-.navigator-item.active { background: #315a93; color: #fff; }
-.navigator-item.unavailable { opacity: 0.58; cursor: not-allowed; }
-.navigator-item small { grid-column: 2; font-size: 11px; }
-.studio-main { min-width: 0; }
-.command-bar { height: 64px; border-bottom: 1px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
-.command-bar div { display: flex; flex-direction: column; }
-.command-bar .save-state { flex-direction: row; font-size: 12px; color: var(--muted); }
-.dashboard-content { padding: 24px; max-width: 1100px; }
-.dashboard-content h1 { margin-top: 0; }
-form { display: flex; align-items: end; gap: 10px; margin-bottom: 24px; }
-form label { align-self: center; }
-input { border: 1px solid var(--border); border-radius: 4px; padding: 8px; min-width: 260px; }
-select { border: 1px solid var(--border); border-radius: 4px; padding: 8px; min-width: 180px; }
-button { border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 4px; padding: 8px 12px; cursor: pointer; }
-button:disabled { opacity: 0.6; cursor: wait; }
-.settings-form { flex-wrap: wrap; align-items: center; }
-.settings-actions { display: flex; gap: 8px; width: 100%; }
-.setting-state, .blocked-state { border: 1px solid var(--border); padding: 12px; display: flex; gap: 12px; color: var(--muted); }
-.setting-state strong { color: var(--accent); }
-.setting-state.unset strong { color: var(--muted); }
-.project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.project-card { border: 1px solid var(--border); background: #fff; border-radius: 6px; padding: 16px; }
-.project-card h2 { margin: 0 0 6px; font-size: 18px; }
-.project-card small { display: block; color: var(--muted); margin-bottom: 16px; }
-.error-state { border: 1px solid #e2b6b6; background: #fff5f5; color: var(--danger); padding: 10px; margin-bottom: 16px; }
-.empty-state { border: 1px dashed var(--border); padding: 24px; color: var(--muted); }
+@import url("./panel.css");
+
+/* INFINICORECIPHER Studio Publishing — główny panel aplikacji */
+
+:root {
+  --shell-canvas: var(--icc-canvas, #f7f6f2);
+  --shell-surface: var(--icc-surface, #ffffff);
+  --shell-ink: var(--icc-ink, #202433);
+  --shell-primary: var(--icc-primary, #315da8);
+  --shell-gold: var(--icc-gold, #b69458);
+  --shell-font: var(--icc-font, "Segoe UI", sans-serif);
+  --shell-control: var(--icc-control-min, 44px);
+
+  /* Role pomocnicze, których nie ma w podstawowym panel.css. */
+  --shell-border: var(--border, #cbd0d8);
+  --shell-muted: var(--muted, #526071);
+  --shell-danger: var(--danger, #873c41);
+  --shell-nav-width: var(--nav-width, 15.5rem);
+  --shell-nav-text: #f4f5f8;
+  --shell-nav-secondary: #c3ccda;
+  --shell-nav-hover: #303648;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--shell-canvas);
+  color: var(--shell-ink);
+  font-family: var(--shell-font);
+  font-size: var(--icc-body, 16px);
+  line-height: 1.5;
+}
+
+.studio-shell [hidden] {
+  display: none !important;
+}
+
+.studio-shell :where(button, input, select, textarea) {
+  font: inherit;
+}
+
+.studio-shell :where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--shell-primary);
+  outline-offset: 2px;
+}
+
+/* Układ główny */
+
+.studio-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: var(--shell-nav-width) minmax(0, 1fr);
+}
+
+.studio-main {
+  min-width: 0;
+  background: var(--shell-canvas);
+}
+
+/* Navigator */
+
+.global-navigator {
+  min-width: 0;
+  padding: var(--icc-space-xl, 20px) var(--icc-space-12, 12px);
+  background: var(--shell-ink);
+  color: var(--shell-nav-text);
+}
+
+.global-navigator .brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 8px 0 22px;
+}
+
+.global-navigator nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--icc-space-4, 4px);
+}
+
+.global-navigator .navigator-item {
+  display: grid;
+  grid-template-columns: 2.125rem minmax(0, 1fr);
+  align-items: center;
+  min-height: var(--shell-control);
+  padding: 8px 10px;
+  border: 0;
+  border-inline-start: 3px solid transparent;
+  border-radius: var(--icc-radius-6, 6px);
+  background: transparent;
+  color: var(--shell-nav-text);
+  text-align: start;
+  text-decoration: none;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.navigator-item small {
+  grid-column: 2;
+  color: var(--shell-nav-secondary);
+  font-size: 0.75rem;
+}
+
+.navigator-item:not(.unavailable):not([aria-disabled="true"]):not(:disabled):hover {
+  background: var(--shell-nav-hover);
+}
+
+.global-navigator .navigator-item:is(.active, [aria-current="page"]) {
+  border-inline-start-color: var(--shell-gold);
+  background: var(--shell-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.navigator-item:is(.active, [aria-current="page"]) small {
+  color: inherit;
+}
+
+.global-navigator .navigator-item:is(.unavailable, [aria-disabled="true"], :disabled) {
+  color: var(--shell-nav-secondary);
+  cursor: not-allowed;
+}
+
+.global-navigator .navigator-item:focus-visible {
+  outline-color: #fff;
+  outline-offset: 1px;
+}
+
+/* Górny pasek i obszar roboczy */
+
+.command-bar {
+  min-height: 64px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--icc-space-12, 12px);
+  padding: 8px var(--icc-space-24, 24px);
+  border-bottom: 1px solid var(--shell-border);
+  background: var(--shell-surface);
+}
+
+.command-bar > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+}
+
+.command-bar .save-state {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--icc-space-8, 8px);
+  color: var(--shell-muted);
+  font-size: 0.8125rem;
+}
+
+.dashboard-content {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: var(--icc-space-24, 24px);
+}
+
+.dashboard-content h1 {
+  margin: 0 0 var(--icc-space-16, 16px);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.2;
+}
+
+/* Formularze — style ograniczone do głównego panelu */
+
+.studio-main form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--icc-space-12, 12px);
+  margin: 0 0 var(--icc-space-24, 24px);
+}
+
+.studio-main form label {
+  align-self: center;
+}
+
+.studio-main :where(input, select, textarea) {
+  max-width: 100%;
+  color: var(--shell-ink);
+}
+
+.studio-main :where(
+  input:not([type]),
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="url"],
+  select,
+  textarea
+) {
+  min-height: var(--shell-control);
+  padding: 8px 12px;
+  border: 1px solid var(--shell-border);
+  border-radius: var(--icc-radius-6, 6px);
+  background: var(--shell-surface);
+}
+
+.studio-main input:is(:not([type]), [type="text"], [type="search"]) {
+  width: min(100%, 18rem);
+}
+
+.studio-main select {
+  width: min(100%, 14rem);
+}
+
+.studio-main button {
+  min-height: var(--shell-control);
+  padding: 8px 14px;
+  border: 1px solid var(--shell-primary);
+  border-radius: var(--icc-radius-6, 6px);
+  background: var(--shell-primary);
+  color: #fff;
+  cursor: pointer;
+}
+
+.studio-main button:not(:disabled):hover {
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 35%);
+}
+
+.studio-main button:disabled {
+  border-color: var(--shell-border);
+  background: #e9ecf0;
+  color: var(--shell-muted);
+  cursor: not-allowed;
+}
+
+.studio-main button[aria-busy="true"] {
+  cursor: progress;
+}
+
+.studio-main .settings-form {
+  align-items: center;
+}
+
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--icc-space-8, 8px);
+  width: 100%;
+}
+
+/* Biblioteka książek */
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: var(--icc-space-16, 16px);
+}
+
+.project-card {
+  min-width: 0;
+  padding: var(--icc-space-16, 16px);
+  border: 1px solid var(--shell-border);
+  border-radius: var(--icc-radius-10, 10px);
+  background: var(--shell-surface);
+  overflow-wrap: anywhere;
+}
+
+.project-card h2 {
+  margin: 0 0 6px;
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+.project-card small {
+  display: block;
+  margin-bottom: var(--icc-space-16, 16px);
+  color: var(--shell-muted);
+}
+
+/* Komunikaty i stany */
+
+.setting-state,
+.blocked-state,
+.empty-state,
+.error-state {
+  padding: var(--icc-space-12, 12px);
+  border: 1px solid var(--shell-border);
+  border-radius: var(--icc-radius-6, 6px);
+  background: var(--shell-surface);
+  color: var(--shell-muted);
+  overflow-wrap: anywhere;
+}
+
+.setting-state,
+.blocked-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--icc-space-12, 12px);
+}
+
+.setting-state strong {
+  color: var(--shell-primary);
+}
+
+.setting-state.unset strong {
+  color: var(--shell-muted);
+}
+
+.blocked-state {
+  border-inline-start: 3px solid var(--shell-gold);
+}
+
+.error-state {
+  margin-bottom: var(--icc-space-16, 16px);
+  border-color: #d9b1b4;
+  background: #fff5f5;
+  color: var(--shell-danger);
+}
+
+.empty-state {
+  padding: var(--icc-space-24, 24px);
+  border-style: dashed;
+}
+
+/* Telefon: Navigator nad treścią, bez przewijania całej strony w bok. */
+
+@media (max-width: 48rem) {
+  .studio-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .global-navigator {
+    padding: var(--icc-space-12, 12px);
+  }
+
+  .global-navigator .brand-logo {
+    margin: 4px 0 12px;
+  }
+
+  .global-navigator nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  }
+
+  .command-bar,
+  .dashboard-content {
+    padding-inline: var(--icc-space-16, 16px);
+  }
+}

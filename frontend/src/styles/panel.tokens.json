@@ -1,0 +1,15 @@
+{
+  "color": {
+    "ink": "#202433",
+    "canvas": "#F7F6F2",
+    "surface": "#FFFFFF",
+    "primary": "#315DA8",
+    "lavender": "#8273A6",
+    "gold": "#B69458"
+  },
+  "space": [4, 8, 12, 16, 24, 32],
+  "radius": [6, 10, 16],
+  "font": "Segoe UI, sans-serif",
+  "bodyPx": 16,
+  "controlMinPx": 44
+}
