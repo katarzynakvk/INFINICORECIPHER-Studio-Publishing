@@ -91,30 +91,41 @@ export function Settings() {
   return (
     <div>
       <h1>Settings</h1>
-      <p>Only explicitly persisted values are shown. Unset values have no hidden fallback.</p>
+      <p className="page-intro">Only explicitly persisted values are shown. Unset values have no hidden fallback.</p>
       {error && <div role="alert" className="error-state">{error}</div>}
-      <form onSubmit={saveSetting} className="settings-form">
-        <label htmlFor="setting-scope">Scope</label>
-        <select id="setting-scope" value={scope} onChange={(event) => setScope(event.target.value as SettingScope)}>
-          {SCOPES.map((option) => <option key={option} value={option}>{option}</option>)}
-        </select>
-        <label htmlFor="setting-scope-id">Scope identity</label>
-        <input
-          id="setting-scope-id"
-          value={scope === "BOOK" ? activeProject.book_id : scopeId}
-          onChange={(event) => setScopeId(event.target.value)}
-          readOnly={scope === "BOOK"}
-          required
-        />
-        <label htmlFor="setting-key">Key</label>
-        <input id="setting-key" value={key} onChange={(event) => setKey(event.target.value)} required />
-        <label htmlFor="setting-value">Value</label>
-        <input id="setting-value" value={value} onChange={(event) => setValue(event.target.value)} />
-        <div className="settings-actions">
-          <button type="button" onClick={() => void loadSetting()} disabled={loading}>Read value</button>
-          <button type="submit" disabled={loading}>Save explicit value</button>
-        </div>
-      </form>
+      <div className="panel">
+        <h2>Explicit setting</h2>
+        <form onSubmit={saveSetting} className="settings-form">
+          <div className="field">
+            <label htmlFor="setting-scope">Scope</label>
+            <select id="setting-scope" value={scope} onChange={(event) => setScope(event.target.value as SettingScope)}>
+              {SCOPES.map((option) => <option key={option} value={option}>{option}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="setting-scope-id">Scope identity</label>
+            <input
+              id="setting-scope-id"
+              value={scope === "BOOK" ? activeProject.book_id : scopeId}
+              onChange={(event) => setScopeId(event.target.value)}
+              readOnly={scope === "BOOK"}
+              required
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="setting-key">Key</label>
+            <input id="setting-key" value={key} onChange={(event) => setKey(event.target.value)} required />
+          </div>
+          <div className="field">
+            <label htmlFor="setting-value">Value</label>
+            <input id="setting-value" value={value} onChange={(event) => setValue(event.target.value)} />
+          </div>
+          <div className="settings-actions">
+            <button type="button" onClick={() => void loadSetting()} disabled={loading}>Read value</button>
+            <button type="submit" disabled={loading}>Save explicit value</button>
+          </div>
+        </form>
+      </div>
       <div className={`setting-state ${state.toLowerCase()}`}>
         <strong>{state}</strong>
         {setting && <span>Revision {setting.revision}</span>}

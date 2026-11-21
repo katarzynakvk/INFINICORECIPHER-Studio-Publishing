@@ -5,6 +5,7 @@ import { ApplicationShell } from "./components/ApplicationShell";
 import { Library } from "./dashboards/Library";
 import { Settings } from "./dashboards/Settings";
 import { Unavailable } from "./dashboards/Unavailable";
+import "./styles/panel.css";
 import "./styles/tokens.css";
 import "./styles/shell.css";
 

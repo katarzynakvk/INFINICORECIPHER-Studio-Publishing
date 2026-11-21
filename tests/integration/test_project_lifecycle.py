@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from backend.services.project_service import ProjectService
+from backend.db.database import ProjectDatabase
 
 
 def test_create_close_reopen_and_directory_cleanup(tmp_path: Path) -> None:
@@ -46,6 +47,38 @@ def test_project_isolation_and_rename_preserve_identity(tmp_path: Path) -> None:
     renamed = service.rename_project(second_root, "Renamed", second)
     assert renamed.book_id == second.book_id
     assert renamed.title == "Renamed"
+    service.close_project()
+
+
+def test_failed_create_preserves_open_project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    service = ProjectService()
+    root = tmp_path / "first"
+    _, database = service.create_project(root, "First")
+
+    with pytest.raises(FileExistsError):
+        service.create_project(root, "Duplicate")
+    assert service.open_project_root == root
+    assert not database.closed
+
+    def fail_initialization(self: ProjectDatabase) -> None:
+        raise OSError("Unable to initialize")
+
+    monkeypatch.setattr(ProjectDatabase, "initialize_schema", fail_initialization)
+    with pytest.raises(OSError, match="Unable to initialize"):
+        service.create_project(tmp_path / "second", "Second")
+    assert service.open_project_root == root
+    assert not database.closed
+    assert database.get_meta("title") == "First"
+    service.close_project()
+
+
+def test_successful_create_switches_open_project(tmp_path: Path) -> None:
+    service = ProjectService()
+    _, first = service.create_project(tmp_path / "first", "First")
+    _, second = service.create_project(tmp_path / "second", "Second")
+    assert first.closed
+    assert not second.closed
+    assert service.open_project_root == tmp_path / "second"
     service.close_project()
 
 

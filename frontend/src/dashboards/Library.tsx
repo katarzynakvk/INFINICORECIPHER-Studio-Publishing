@@ -8,6 +8,8 @@ export function Library() {
   const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const busy = useProjectStore((state) => state.projectOperationBusy);
+  const activeProject = useProjectStore((state) => state.activeProject);
   const setActiveProject = useProjectStore((state) => state.setActiveProject);
 
   async function load() {
@@ -27,6 +29,7 @@ export function Library() {
 
   async function createProject(event: React.FormEvent) {
     event.preventDefault();
+    if (!useProjectStore.getState().beginProjectOperation()) return;
     setError(null);
     try {
       const data = await apiRequest<{ project: Project }>("/api/v1/projects", {
@@ -38,10 +41,13 @@ export function Library() {
       await load();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to create project");
+    } finally {
+      useProjectStore.getState().endProjectOperation();
     }
   }
 
   async function openProject(project: Project) {
+    if (!useProjectStore.getState().beginProjectOperation()) return;
     try {
       const data = await apiRequest<{ project: Project }>("/api/v1/projects/open", {
         method: "POST",
@@ -51,25 +57,55 @@ export function Library() {
       setError(null);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to open project");
+    } finally {
+      useProjectStore.getState().endProjectOperation();
+    }
+  }
+
+  async function closeProject() {
+    if (!useProjectStore.getState().beginProjectOperation()) return;
+    setError(null);
+    try {
+      const result = await apiRequest<{ closed: boolean }>("/api/v1/projects/close", { method: "POST" });
+      if (!result.closed) throw new Error("Project was not closed");
+      setActiveProject(null);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to close project");
+    } finally {
+      useProjectStore.getState().endProjectOperation();
     }
   }
 
   return (
     <div>
       <h1>Library</h1>
+      <p className="page-intro">Create and open your book projects from your local library.</p>
       {error && <div role="alert" className="error-state">{error}</div>}
-      <form onSubmit={createProject}>
-        <label htmlFor="project-title">Book title</label>
-        <input
-          id="project-title"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          required
-        />
-        <button type="submit">Create project</button>
-      </form>
+      {activeProject && (
+        <div className="panel">
+          <h2>Open project</h2>
+          <p>{activeProject.title}</p>
+          <button type="button" disabled={busy} onClick={() => void closeProject()}>Close project</button>
+        </div>
+      )}
+      <div className="panel">
+        <h2>Start a new project</h2>
+        <form className="create-form" onSubmit={createProject}>
+          <div className="field">
+            <label htmlFor="project-title">Book title</label>
+            <input
+              id="project-title"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" disabled={busy}>Create project</button>
+        </form>
+      </div>
+      <h2 className="section-heading">Your projects</h2>
       {loading ? (
-        <div>Loading projects...</div>
+        <div role="status">Loading projects...</div>
       ) : projects.length === 0 ? (
         <div className="empty-state">No projects exist in this library.</div>
       ) : (
@@ -78,7 +114,7 @@ export function Library() {
             <article className="project-card" key={project.book_id}>
               <h2>{project.title}</h2>
               <small>{project.book_id}</small>
-              <button type="button" onClick={() => void openProject(project)}>Open</button>
+              <button type="button" disabled={busy} onClick={() => void openProject(project)}>Open</button>
             </article>
           ))}
         </div>

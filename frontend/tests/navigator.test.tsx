@@ -30,5 +30,10 @@ describe("ApplicationShell", () => {
     expect(screen.getAllByText("Library").length).toBeGreaterThan(0);
     expect(screen.getByText("Canon & Visual DNA")).toBeTruthy();
     expect(screen.getAllByText("Unavailable").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Skip to content" }).getAttribute("href")).toBe("#main-content");
+    expect(screen.getByRole("main").id).toBe("main-content");
+    expect(screen.getByRole("navigation", { name: "Workspace and system" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Library" }).getAttribute("aria-current")).toBe("page");
+    expect(screen.getByLabelText("Book title")).toBeTruthy();
   });
 });
