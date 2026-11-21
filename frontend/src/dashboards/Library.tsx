@@ -8,6 +8,8 @@ export function Library() {
   const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const activeProject = useProjectStore((state) => state.activeProject);
   const setActiveProject = useProjectStore((state) => state.setActiveProject);
 
   async function load() {
@@ -27,6 +29,8 @@ export function Library() {
 
   async function createProject(event: React.FormEvent) {
     event.preventDefault();
+    if (busy) return;
+    setBusy(true);
     setError(null);
     try {
       const data = await apiRequest<{ project: Project }>("/api/v1/projects", {
@@ -38,10 +42,14 @@ export function Library() {
       await load();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to create project");
+    } finally {
+      setBusy(false);
     }
   }
 
   async function openProject(project: Project) {
+    if (busy) return;
+    setBusy(true);
     try {
       const data = await apiRequest<{ project: Project }>("/api/v1/projects/open", {
         method: "POST",
@@ -51,6 +59,23 @@ export function Library() {
       setError(null);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to open project");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function closeProject() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await apiRequest<{ closed: boolean }>("/api/v1/projects/close", { method: "POST" });
+      if (!result.closed) throw new Error("Project was not closed");
+      setActiveProject(null);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to close project");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -59,6 +84,13 @@ export function Library() {
       <h1>Library</h1>
       <p className="page-intro">Create and open your book projects from your local library.</p>
       {error && <div role="alert" className="error-state">{error}</div>}
+      {activeProject && (
+        <div className="panel">
+          <h2>Open project</h2>
+          <p>{activeProject.title}</p>
+          <button type="button" disabled={busy} onClick={() => void closeProject()}>Close project</button>
+        </div>
+      )}
       <div className="panel">
         <h2>Start a new project</h2>
         <form className="create-form" onSubmit={createProject}>
@@ -71,7 +103,7 @@ export function Library() {
               required
             />
           </div>
-          <button type="submit">Create project</button>
+          <button type="submit" disabled={busy}>Create project</button>
         </form>
       </div>
       <h2 className="section-heading">Your projects</h2>
@@ -85,7 +117,7 @@ export function Library() {
             <article className="project-card" key={project.book_id}>
               <h2>{project.title}</h2>
               <small>{project.book_id}</small>
-              <button type="button" onClick={() => void openProject(project)}>Open</button>
+              <button type="button" disabled={busy} onClick={() => void openProject(project)}>Open</button>
             </article>
           ))}
         </div>

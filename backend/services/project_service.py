@@ -25,8 +25,6 @@ class ProjectService:
 
     def create_project(self, root: Path, title: str) -> tuple[ProjectIdentity, ProjectDatabase]:
         root = root.resolve()
-        if self._database is not None:
-            self.close_project()
         if root.exists() and any(root.iterdir()):
             raise FileExistsError("Project destination must be empty")
         initialize_project_directories(root)
@@ -37,6 +35,7 @@ class ProjectService:
             database.initialize_schema()
             database.set_meta("book_id", identity.book_id)
             database.set_meta("title", identity.title)
+            self.close_project()
         except BaseException:
             database.close()
             raise
