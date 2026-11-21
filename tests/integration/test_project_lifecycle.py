@@ -54,12 +54,17 @@ def test_schema_version_and_migration_registry(tmp_path: Path) -> None:
     root = tmp_path / "schema"
     identity, database = service.create_project(root, "Schema Test")
 
-    assert database.get_meta("schema_version") == "1"
+    assert database.get_meta("schema_version") == "2"
     row = database.execute(
         "SELECT version, name FROM migration_registry WHERE version = 1"
     ).fetchone()
     assert row is not None
     assert row["name"] == "001_initial_project_schema"
+    foundation_row = database.execute(
+        "SELECT version, name FROM migration_registry WHERE version = 2"
+    ).fetchone()
+    assert foundation_row is not None
+    assert foundation_row["name"] == "002_settings_and_canon_foundation"
     service.close_project()
 
 

@@ -20,6 +20,9 @@
 - Restore into a separate destination
 - Corrupt backup rejection
 - Typed Flask API envelopes for project health/list/create/open/close/rename/backup
+- Separated settings scopes with explicit/unset state and revisions
+- Canon revision history, approval, locks and stale-mutation protection
+- Schema migrations 1 and 2
 - Server-side project-library path enforcement
 - React application shell
 - Canonical 14-item Navigator

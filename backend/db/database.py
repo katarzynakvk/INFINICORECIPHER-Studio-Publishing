@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 class ProjectDatabase:
@@ -66,6 +66,51 @@ class ProjectDatabase:
                 decided_at TEXT NOT NULL,
                 FOREIGN KEY (entity_id) REFERENCES entity_revisions(entity_id)
             );
+
+            CREATE TABLE IF NOT EXISTS settings (
+                setting_id TEXT PRIMARY KEY,
+                scope TEXT NOT NULL,
+                scope_id TEXT NOT NULL,
+                key TEXT NOT NULL,
+                value_json TEXT,
+                state TEXT NOT NULL,
+                revision INTEGER NOT NULL CHECK (revision >= 1),
+                updated_at TEXT NOT NULL,
+                UNIQUE(scope, scope_id, key)
+            );
+
+            CREATE TABLE IF NOT EXISTS canon_revisions (
+                canon_id TEXT NOT NULL,
+                revision INTEGER NOT NULL CHECK (revision >= 1),
+                parent_revision INTEGER,
+                state TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                locks_json TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                PRIMARY KEY(canon_id, revision),
+                FOREIGN KEY(canon_id, parent_revision)
+                    REFERENCES canon_revisions(canon_id, revision)
+            );
+
+            CREATE TABLE IF NOT EXISTS canon_approvals (
+                approval_id TEXT PRIMARY KEY,
+                canon_id TEXT NOT NULL,
+                canon_revision INTEGER NOT NULL,
+                actor_id TEXT NOT NULL,
+                decided_at TEXT NOT NULL,
+                FOREIGN KEY(canon_id, canon_revision)
+                    REFERENCES canon_revisions(canon_id, revision)
+            );
+
+            CREATE TABLE IF NOT EXISTS canon_conflicts (
+                conflict_id TEXT PRIMARY KEY,
+                canon_id TEXT NOT NULL,
+                left_revision INTEGER NOT NULL,
+                right_revision INTEGER NOT NULL,
+                status TEXT NOT NULL,
+                detail TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
             """
         )
         connection.execute(
@@ -75,7 +120,12 @@ class ProjectDatabase:
         connection.execute(
             "INSERT OR IGNORE INTO migration_registry(version, name, applied_at) "
             "VALUES (?, ?, ?)",
-            (SCHEMA_VERSION, "001_initial_project_schema", datetime.now(timezone.utc).isoformat()),
+            (1, "001_initial_project_schema", datetime.now(timezone.utc).isoformat()),
+        )
+        connection.execute(
+            "INSERT OR IGNORE INTO migration_registry(version, name, applied_at) "
+            "VALUES (?, ?, ?)",
+            (2, "002_settings_and_canon_foundation", datetime.now(timezone.utc).isoformat()),
         )
         connection.commit()
 

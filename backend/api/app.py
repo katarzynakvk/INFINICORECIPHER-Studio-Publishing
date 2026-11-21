@@ -4,6 +4,8 @@ from typing import Any
 from flask import Flask, jsonify, request
 
 from backend.services.project_service import ProjectService
+from backend.services.settings_service import SettingsService
+from backend.services.canon_service import CanonLocked, CanonService, RevisionConflict
 
 
 def success(data: Any, status: int = 200):
@@ -25,6 +27,8 @@ def create_app(projects_root: Path, service: ProjectService | None = None) -> Fl
     projects_root = projects_root.resolve()
     projects_root.mkdir(parents=True, exist_ok=True)
     project_service = service or ProjectService()
+    settings_service = SettingsService()
+    canon_service = CanonService()
 
     def project_payload(identity: Any, root: Path) -> dict[str, Any]:
         return {
@@ -140,5 +144,156 @@ def create_app(projects_root: Path, service: ProjectService | None = None) -> Fl
         except OSError as exc:
             return error("STORAGE_ERROR", str(exc), 500)
         return success({"archive": str(archive), "state": "BACKUP_VERIFIED"})
+
+    def require_open_database():
+        database = project_service._database
+        if database is None:
+            raise LookupError("No project is open")
+        return database
+
+    @app.post("/api/v1/settings")
+    def set_setting():
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            return error("INVALID_REQUEST", "JSON object required", 400)
+        scope = body.get("scope")
+        scope_id = body.get("scope_id")
+        key = body.get("key")
+        if scope not in {
+            "APPLICATION", "PROJECT", "BOOK", "EDITION", "RUNTIME",
+            "AI_PROVIDER", "STORAGE", "SECURITY_CREDENTIAL_REFERENCE",
+        } or not isinstance(scope_id, str) or not isinstance(key, str):
+            return error("INVALID_REQUEST", "Valid scope, scope_id and key are required", 400)
+        if "value" not in body:
+            return error("INVALID_REQUEST", "value is required", 400)
+        try:
+            database = require_open_database()
+            setting = settings_service.set_setting(
+                database, scope, scope_id, key, body["value"]
+            )
+        except LookupError as exc:
+            return error("NOT_FOUND", str(exc), 409)
+        return success({
+            "setting_id": setting.setting_id,
+            "scope": setting.scope,
+            "scope_id": setting.scope_id,
+            "key": setting.key,
+            "value": setting.value,
+            "state": setting.state,
+            "revision": setting.revision,
+        })
+
+    @app.get("/api/v1/settings")
+    def get_setting():
+        scope = request.args.get("scope")
+        scope_id = request.args.get("scope_id")
+        key = request.args.get("key")
+        try:
+            database = require_open_database()
+            setting = settings_service.get_setting(database, scope, scope_id, key)
+        except LookupError as exc:
+            return error("NOT_FOUND", str(exc), 409)
+        if setting is None:
+            return success({"setting": None, "state": "UNSET"})
+        return success({
+            "setting": {
+                "setting_id": setting.setting_id,
+                "scope": setting.scope,
+                "scope_id": setting.scope_id,
+                "key": setting.key,
+                "value": setting.value,
+                "state": setting.state,
+                "revision": setting.revision,
+            }
+        })
+
+    @app.post("/api/v1/canon")
+    def create_canon():
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            return error("INVALID_REQUEST", "JSON object required", 400)
+        canon_id = body.get("canon_id")
+        payload = body.get("payload")
+        if not isinstance(canon_id, str) or not isinstance(payload, dict):
+            return error("INVALID_REQUEST", "canon_id and payload are required", 400)
+        locks = tuple(body.get("locks", []))
+        try:
+            database = require_open_database()
+            revision = canon_service.create(database, canon_id, payload, locks)
+        except LookupError as exc:
+            return error("NOT_FOUND", str(exc), 409)
+        except RevisionConflict as exc:
+            return error("REVISION_CONFLICT", str(exc), 409)
+        return success(canon_payload(revision), 201)
+
+    @app.post("/api/v1/canon/update")
+    def update_canon():
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            return error("INVALID_REQUEST", "JSON object required", 400)
+        canon_id = body.get("canon_id")
+        payload = body.get("payload")
+        expected = body.get("expected_revision")
+        if not isinstance(canon_id, str) or not isinstance(payload, dict) or not isinstance(expected, int):
+            return error("INVALID_REQUEST", "canon_id, payload and expected_revision are required", 400)
+        try:
+            database = require_open_database()
+            revision = canon_service.update(database, canon_id, expected, payload)
+        except LookupError as exc:
+            return error("NOT_FOUND", str(exc), 409)
+        except RevisionConflict as exc:
+            return error("REVISION_CONFLICT", str(exc), 409)
+        except CanonLocked as exc:
+            return error("CANON_LOCKED", str(exc), 409)
+        return success(canon_payload(revision))
+
+    @app.post("/api/v1/canon/approve")
+    def approve_canon():
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            return error("INVALID_REQUEST", "JSON object required", 400)
+        canon_id = body.get("canon_id")
+        revision = body.get("revision")
+        actor_id = body.get("actor_id")
+        if not isinstance(canon_id, str) or not isinstance(revision, int) or not isinstance(actor_id, str):
+            return error("INVALID_REQUEST", "canon_id, revision and actor_id are required", 400)
+        try:
+            database = require_open_database()
+            approved = canon_service.approve(database, canon_id, revision, actor_id)
+        except LookupError as exc:
+            return error("NOT_FOUND", str(exc), 409)
+        except RevisionConflict as exc:
+            return error("REVISION_CONFLICT", str(exc), 409)
+        return success(canon_payload(approved))
+
+    @app.post("/api/v1/canon/lock")
+    def lock_canon():
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            return error("INVALID_REQUEST", "JSON object required", 400)
+        canon_id = body.get("canon_id")
+        revision = body.get("revision")
+        if not isinstance(canon_id, str) or not isinstance(revision, int):
+            return error("INVALID_REQUEST", "canon_id and revision are required", 400)
+        try:
+            database = require_open_database()
+            locked = canon_service.lock(database, canon_id, revision)
+        except LookupError as exc:
+            return error("NOT_FOUND", str(exc), 409)
+        except RevisionConflict as exc:
+            return error("REVISION_CONFLICT", str(exc), 409)
+        except CanonLocked as exc:
+            return error("CANON_LOCKED", str(exc), 409)
+        return success(canon_payload(locked))
+
+    def canon_payload(revision):
+        return {
+            "canon_id": revision.canon_id,
+            "revision": revision.revision,
+            "parent_revision": revision.parent_revision,
+            "state": revision.state,
+            "payload": revision.payload,
+            "locks": list(revision.locks),
+        }
 
     return app

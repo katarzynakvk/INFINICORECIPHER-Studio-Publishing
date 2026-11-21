@@ -9,3 +9,4 @@ No implementation evidence exists yet.
 | EV-P1-003 | 1 | Foundation API and lifecycle suites | `.venv/bin/python -m pytest tests/api/test_project_api.py tests/integration/test_project_lifecycle.py -q` | 7 passed | 2026-11-21 | TESTED |
 | EV-P1-004 | 1 | React application shell build | `cd frontend && npm run build` | Build passed | 2026-11-21 | TESTED |
 | EV-P1-005 | 1 | React Navigator interaction test | `cd frontend && npm test` | 1 passed | 2026-11-21 | TESTED |
+| EV-P1-006 | 1 | Foundation settings and Canon API/domain tests | `.venv/bin/python -m pytest tests/unit/test_canon_rules.py tests/api/test_foundation_api.py -q` | 4 passed | 2026-11-21 | TESTED |
