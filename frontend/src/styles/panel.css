@@ -1,0 +1,23 @@
+:root {
+  --icc-ink: #202433;
+  --icc-canvas: #F7F6F2;
+  --icc-surface: #FFFFFF;
+  --icc-primary: #315DA8;
+  --icc-lavender: #8273A6;
+  --icc-gold: #B69458;
+
+  --icc-space-4: 4px;
+  --icc-space-8: 8px;
+  --icc-space-12: 12px;
+  --icc-space-16: 16px;
+  --icc-space-24: 24px;
+  --icc-space-32: 32px;
+
+  --icc-radius-6: 6px;
+  --icc-radius-10: 10px;
+  --icc-radius-16: 16px;
+
+  --icc-font: Segoe UI, sans-serif;
+  --icc-body: 16px;
+  --icc-control-min: 44px;
+}
