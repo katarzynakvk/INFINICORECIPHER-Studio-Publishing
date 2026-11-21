@@ -1,0 +1,62 @@
+# Repository Structure
+
+The repository follows the logical architecture in the Bible. Directories are created
+only when the relevant implementation or evidence is required.
+
+```text
+backend/
+  api/routes/
+  api/contracts/
+  domain/models/
+  domain/rules/
+  services/
+  repositories/
+  adapters/ai/
+  adapters/upscaling/
+  adapters/renderer/
+  adapters/gcu/
+  db/migrations/
+  db/tables/
+  security/
+  utils/
+frontend/
+  src/api/
+  src/components/
+  src/dashboards/
+  src/hooks/
+  src/routes/
+  src/store/
+  src/styles/
+  src/types/
+  tests/
+desktop/
+adapters/
+assets/
+config/
+docs/
+  ADR/
+  acceptance/
+  architecture/
+  audits/
+  capability/
+  evidence/
+  operations/
+  api/
+migrations/
+scripts/
+tests/
+  unit/
+  integration/
+  api/
+  database/
+  file_integrity/
+  security/
+  recovery/
+  migration/
+  performance/
+  accessibility/
+  end_to_end/
+  acceptance/
+  fixtures/
+web/
+```
