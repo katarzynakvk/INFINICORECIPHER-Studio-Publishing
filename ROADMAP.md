@@ -4,8 +4,8 @@ Phase status is evidence-based, not filename-based.
 
 | Phase | Status | Unlock condition |
 |---|---|---|
-| 0 — Audit & Architecture Lock | IN_PROGRESS | Architecture Lock accepted; blockers not implementation-blocking |
-| 1 — Foundation | NOT_STARTED | Phase 0 accepted |
+| 0 — Audit & Architecture Lock | ACCEPTED | Phase 0 Founder Acceptance recorded |
+| 1 — Foundation | IN_PROGRESS | Phase 0 accepted |
 | 2 — Manuscript & Planning | NOT_STARTED | Phase 1 accepted |
 | 3 — AI & Production | NOT_STARTED | Phase 2 accepted |
 | 4 — Cover & Publishing | NOT_STARTED | Phase 3 accepted |

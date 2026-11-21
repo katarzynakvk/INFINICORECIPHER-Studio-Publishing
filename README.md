@@ -10,9 +10,9 @@ the Bible. The repository is currently in **Phase 0 — Audit & Architecture Loc
 
 ## Project status
 
-- Application implementation: `NOT_STARTED`
-- Phase 0 architecture package: `IN_PROGRESS`
-- Founder/architecture acceptance: `NOT_RECORDED`
+- Application implementation: `PARTIAL`
+- Phase 0 architecture package: `ACCEPTED`
+- Phase 1 Foundation vertical slice: `IN_PROGRESS`
 
 Do not interpret repository files or generated documentation as evidence of a passing
 implementation. Evidence is recorded only in `docs/acceptance/EVIDENCE-REGISTER.md`.

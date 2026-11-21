@@ -1,8 +1,8 @@
 # Architecture Lock
 
-**Status:** DRAFT
+**Status:** ACCEPTED
 **Source revision:** repository `93f7969`
-**Founder decision:** NOT_RECORDED
+**Founder decision:** ACCEPTED by the Founder on 2026-11-21
 
 ## Accepted for proposal
 

@@ -1,0 +1,1 @@
+"""INFINICORECIPHER Studio Publishing backend."""
