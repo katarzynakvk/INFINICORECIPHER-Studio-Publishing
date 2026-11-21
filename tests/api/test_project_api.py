@@ -1,7 +1,10 @@
 from pathlib import Path
 from threading import Event, Thread
 
+import pytest
+
 from backend.api.app import create_app
+from backend.services.project_service import ProjectService
 
 
 def test_project_api_create_list_open_close(tmp_path: Path) -> None:
@@ -43,6 +46,26 @@ def test_project_api_blocks_path_traversal(tmp_path: Path) -> None:
     )
     assert response.status_code == 400
     assert response.get_json()["error"]["code"] == "PATH_TRAVERSAL_BLOCKED"
+
+
+def test_project_api_rejects_slug_symlink_outside_library(tmp_path: Path) -> None:
+    library = tmp_path / "library"
+    app = create_app(library)
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    try:
+        (library / "unsafe").symlink_to(outside, target_is_directory=True)
+    except OSError:
+        pytest.skip("Directory symlinks are unavailable")
+    client = app.test_client()
+    response = client.post("/api/v1/projects", json={"title": "Unsafe"})
+    assert response.status_code == 400
+    assert response.get_json()["error"]["code"] == "PATH_TRAVERSAL_BLOCKED"
+    assert not list(outside.iterdir())
+    service = ProjectService()
+    service.create_project(outside, "Outside")
+    service.close_project()
+    assert client.get("/api/v1/projects").get_json()["data"]["projects"] == []
 
 
 def test_project_can_be_closed_from_another_request_thread(tmp_path: Path) -> None:

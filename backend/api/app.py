@@ -60,7 +60,7 @@ def create_app(projects_root: Path, service: ProjectService | None = None) -> Fl
     def list_projects():
         projects = []
         for root in sorted(projects_root.iterdir(), key=lambda item: item.name.lower()):
-            if not root.is_dir():
+            if not root.is_dir() or root.resolve().parent != projects_root:
                 continue
             try:
                 identity = project_service.repository.read(root)
@@ -81,15 +81,16 @@ def create_app(projects_root: Path, service: ProjectService | None = None) -> Fl
         if folder_name is not None:
             if not isinstance(folder_name, str) or folder_name in ("", ".", ".."):
                 return error("INVALID_REQUEST", "folder_name is invalid", 400)
-            candidate = (projects_root / folder_name).resolve()
-            if candidate.parent != projects_root:
-                return error("PATH_TRAVERSAL_BLOCKED", "Project path is outside the project library", 400)
+            candidate = projects_root / folder_name
         else:
             slug = "".join(
                 character.lower() if character.isalnum() else "-"
                 for character in title.strip()
             ).strip("-")
             candidate = projects_root / (slug or "untitled-book")
+        candidate = candidate.resolve()
+        if candidate.parent != projects_root:
+            return error("PATH_TRAVERSAL_BLOCKED", "Project path is outside the project library", 400)
         try:
             identity, _ = project_service.create_project(candidate, title.strip())
         except FileExistsError as exc:
