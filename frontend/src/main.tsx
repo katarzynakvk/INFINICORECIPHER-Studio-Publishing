@@ -16,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route index element={<Navigate to="/library" replace />} />
           <Route path="/library" element={<Library />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/book" element={<Settings />} />
           <Route path="*" element={<Unavailable />} />
         </Route>
       </Routes>

@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 body { margin: 0; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 .studio-shell { min-height: 100vh; display: grid; grid-template-columns: var(--nav-width) 1fr; }
 .global-navigator { background: #172231; color: #fff; padding: 20px 12px; }
 .global-navigator nav { display: flex; flex-direction: column; gap: 2px; }
@@ -19,7 +19,14 @@ button, input { font: inherit; }
 form { display: flex; align-items: end; gap: 10px; margin-bottom: 24px; }
 form label { align-self: center; }
 input { border: 1px solid var(--border); border-radius: 4px; padding: 8px; min-width: 260px; }
+select { border: 1px solid var(--border); border-radius: 4px; padding: 8px; min-width: 180px; }
 button { border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 4px; padding: 8px 12px; cursor: pointer; }
+button:disabled { opacity: 0.6; cursor: wait; }
+.settings-form { flex-wrap: wrap; align-items: center; }
+.settings-actions { display: flex; gap: 8px; width: 100%; }
+.setting-state, .blocked-state { border: 1px solid var(--border); padding: 12px; display: flex; gap: 12px; color: var(--muted); }
+.setting-state strong { color: var(--accent); }
+.setting-state.unset strong { color: var(--muted); }
 .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .project-card { border: 1px solid var(--border); background: #fff; border-radius: 6px; padding: 16px; }
 .project-card h2 { margin: 0 0 6px; font-size: 18px; }

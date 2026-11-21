@@ -8,7 +8,7 @@ export interface NavigatorItem {
 export const NAVIGATOR_ITEMS: NavigatorItem[] = [
   { number: "01", label: "Library", path: "/library", available: true },
   { number: "02", label: "Project Overview", path: "/overview", available: false },
-  { number: "03", label: "Book Settings", path: "/settings/book", available: false },
+  { number: "03", label: "Book Settings", path: "/settings/book", available: true },
   { number: "04", label: "Canon & Visual DNA", path: "/canon", available: false },
   { number: "05", label: "Manuscript", path: "/manuscript", available: false },
   { number: "06", label: "Page Planner", path: "/planner", available: false },

@@ -17,3 +17,23 @@ export interface Project {
   state: "ACTIVE" | "ARCHIVED";
   root: string;
 }
+
+export type SettingScope =
+  | "APPLICATION"
+  | "PROJECT"
+  | "BOOK"
+  | "EDITION"
+  | "RUNTIME"
+  | "AI_PROVIDER"
+  | "STORAGE"
+  | "SECURITY_CREDENTIAL_REFERENCE";
+
+export interface Setting {
+  setting_id: string;
+  scope: SettingScope;
+  scope_id: string;
+  key: string;
+  value: unknown;
+  state: "EXPLICIT" | "UNSET";
+  revision: number;
+}
