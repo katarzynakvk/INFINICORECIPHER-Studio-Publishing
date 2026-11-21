@@ -17,6 +17,12 @@ the Bible. The repository is currently in **Phase 0 — Audit & Architecture Loc
 Do not interpret repository files or generated documentation as evidence of a passing
 implementation. Evidence is recorded only in `docs/acceptance/EVIDENCE-REGISTER.md`.
 
+## Panel design tokens
+
+`frontend/src/styles/panel.tokens.json` records the editable panel values, and
+`frontend/src/styles/panel.css` supplies the corresponding CSS variables used by the
+frontend. Update both files together; the frontend tests check that they match.
+
 ## Planned development
 
 The implementation is phase-gated:
