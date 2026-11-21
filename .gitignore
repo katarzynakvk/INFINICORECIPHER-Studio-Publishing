@@ -10,3 +10,4 @@ outputs/
 temp/
 *.sqlite-wal
 *.sqlite-shm
+*.tsbuildinfo

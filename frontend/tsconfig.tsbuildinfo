@@ -1,1 +1,0 @@
-{"root":["./src/main.tsx","./src/api/client.ts","./src/components/ApplicationShell.tsx","./src/dashboards/Library.tsx","./src/dashboards/Settings.tsx","./src/dashboards/Unavailable.tsx","./src/routes/navigator.ts","./src/store/projectStore.ts","./src/types/api.ts","./tests/navigator.test.tsx"],"version":"5.9.3"}
