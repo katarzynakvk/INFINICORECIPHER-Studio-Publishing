@@ -78,6 +78,10 @@ in `docs/architecture/ARCHITECTURE-BASELINE.md` and ADR-009. The authoritative
 Bible DOCX is not present in the repository; do not claim that the proposal amends
 the Bible or is formally accepted. Reconcile it with the Bible and obtain the
 required Founder/Architecture decision before treating it as binding scope.
+Its canonical status in every current-state document is
+`PROPOSED / DEFERRED — NOT ACCEPTED`. Do not infer missing Bible requirements and
+do not promote ADR-009 or the Mobile Client & Synchronization workstream from that
+status solely because supporting architecture has been added to the repository.
 
 The proposal describes a first-class Android/iOS client of shared Studio contracts
 and a single logical project source of truth, with explicit offline/synchronization
@@ -86,10 +90,19 @@ the same Canon and security rules as desktop. It does not choose a mobile framew
 service topology, transport, cloud, conflict algorithm, offline-write policy or
 release scope. Do not invent these decisions or imply full feature parity.
 
-Mobile is a separate future roadmap workstream, not a numbered phase. Do not begin
-mobile implementation during Phase 1 or Phase 2; Phase 1 must first be formally
-accepted, and mobile scope and blocking architecture decisions must be approved
-before implementation. This proposal does not relax the Phase 1 acceptance gate or
+Mobile is a separate future roadmap workstream, not a numbered phase. Phase 1 must
+not implement an Android/iOS application, synchronization, mobile API, offline
+cache, conflict-resolution engine or mobile-specific authentication flow. Keep
+Phase 1 domain models, contracts and business rules independent of desktop-specific
+UI concerns where reasonably required by Foundation, without adding mobile
+abstractions or features.
+
+After Phase 1 is formally ACCEPTED, complete
+`docs/acceptance/MOBILE-ARCHITECTURE-GATE.md` as a separate checkpoint. Record
+architecture readiness and implementation scope independently. Do not begin
+mobile implementation until the complete Bible has been reconciled, the checkpoint
+has been completed and the relevant scope and architecture decisions have explicit
+authorized approval. This proposal does not relax the Phase 1 acceptance gate or
 the Phase 2 hard gate.
 
 If two requirements conflict:

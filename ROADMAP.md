@@ -16,15 +16,17 @@ Phase status is evidence-based, not filename-based.
 
 | Workstream | Status | Entry condition | Gate |
 |---|---|---|---|
-| Mobile Client & Synchronization | PROPOSED — NOT_STARTED | Phase 1 formally accepted; reconcile proposal with the authoritative Bible and decide release scope | Approve ADR-009, service topology, security boundary, capability matrix and synchronization contract before implementation |
+| Mobile Client & Synchronization | PROPOSED / DEFERRED — NOT ACCEPTED | Phase 1 formally accepted; reconcile proposal with the complete authoritative Bible | Complete the separate mobile architecture checkpoint; make independent formal decisions on architecture readiness and implementation scope before implementation |
 
 This is a future cross-cutting architecture workstream, not a new numbered phase
 and not authorization to begin mobile implementation during Phase 1 or Phase 2.
-Planning may define its scope after the Phase 1 gate; implementation must follow
-approved dependencies and its own acceptance criteria. No v1 inclusion or exclusion
-is implied until the authoritative specification and Founder decision establish it.
+Do not begin its post-Phase-1 checkpoint until Phase 1 is formally accepted. No v1
+inclusion or exclusion is implied until the authoritative specification and Founder
+decision establish it.
 
-The mobile client is intended to be a first-class client of the same logical Studio
+The proposal envisions mobile as a first-class client of the same logical Studio
 projects and governed contracts, not an independent publishing system. See
 `docs/architecture/ARCHITECTURE-BASELINE.md` and proposed
-`docs/ADR/ADR-009-mobile-client-and-synchronization.md`.
+`docs/ADR/ADR-009-mobile-client-and-synchronization.md`, with the post-Phase-1
+checkpoint in `docs/acceptance/MOBILE-ARCHITECTURE-GATE.md`. Supporting documents
+do not promote this workstream from **PROPOSED / DEFERRED — NOT ACCEPTED**.

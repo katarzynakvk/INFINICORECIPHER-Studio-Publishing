@@ -18,4 +18,4 @@
 | Security/recovery | 5 | MISSING | Security and crash tests |
 | Installation/migration | 5 | MISSING | Windows build and upgrade tests |
 | Full acceptance | 6 | MISSING | Pilot and Founder evidence |
-| Mobile client and synchronization | Future workstream | PROPOSED — NOT_STARTED | Bible reconciliation, approved scope/ADR-009, shared-contract and sync verification |
+| Mobile client and synchronization | Future workstream | PROPOSED / DEFERRED — NOT ACCEPTED | Complete Bible reconciliation and separate post-Phase-1 architecture/scope checkpoint |

@@ -1,21 +1,23 @@
 # ADR-009: Mobile Client and Synchronization Boundaries
 
-- **Status:** PROPOSED — architecture review required
+- **Status:** PROPOSED / DEFERRED — NOT ACCEPTED
 - **Date:** 2026-11-21
 - **Related:** `docs/architecture/ARCHITECTURE-BASELINE.md`, `ROADMAP.md`
 
 ## Context
 
 The Studio is currently implemented as a Windows-targeted, local-first desktop
-application. The target ecosystem also needs a dedicated mobile client for Android
-and iOS device classes, including tablets, large-screen and foldable devices.
-Offline use and multiple clients introduce synchronization, conflict, identity,
-authorization and sensitive-credential concerns that must not be hidden inside a
-mobile UI implementation.
+application. A proposed ecosystem extension would add a dedicated mobile client
+for Android and iOS device classes, including tablets, large-screen and foldable
+devices. Offline use and multiple clients introduce synchronization, conflict,
+identity, authorization and sensitive-credential concerns that must not be hidden
+inside a mobile UI implementation.
 
 The authoritative Bible DOCX was not available in the repository when this ADR
-was drafted. This proposal must be reconciled with the Bible and formally accepted
-before it is treated as an authoritative requirement.
+was drafted. Do not infer missing Bible requirements or promote this ADR from
+PROPOSED / DEFERRED — NOT ACCEPTED because supporting architecture has been added
+to the repository. Reconcile this proposal with the complete Bible and obtain
+formal acceptance before treating it as an authoritative requirement.
 
 ## Proposed architectural constraints
 
@@ -54,7 +56,16 @@ before it is treated as an authoritative requirement.
   this proposal.
 - The current Phase 1 Foundation acceptance gate and Phase 2 hard gate are
   unchanged.
-- Mobile implementation must not begin until Phase 1 is formally accepted and
-  mobile scope and blocking architecture decisions are approved.
+- Phase 1 must not implement an Android/iOS application, synchronization, mobile
+  API, offline cache, conflict-resolution engine or mobile-specific authentication
+  flow.
+- Phase 1 domain models, contracts and business rules should not be unnecessarily
+  coupled to desktop-specific UI concerns. This guardrail does not authorize
+  mobile-specific abstractions or expand Foundation scope.
+- After formal Phase 1 acceptance, run the separate checkpoint in
+  `docs/acceptance/MOBILE-ARCHITECTURE-GATE.md`. Architecture readiness and
+  implementation scope are separate decisions. Mobile implementation must not
+  begin until the checkpoint has been completed and the relevant scope and
+  blocking architecture decisions have explicit authorized approval.
 - Final desktop packaging still requires resolution of the desktop-shell decision
   under ADR-002.

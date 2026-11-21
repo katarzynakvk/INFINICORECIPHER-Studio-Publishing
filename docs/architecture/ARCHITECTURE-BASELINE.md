@@ -11,12 +11,12 @@ The current implementation baseline is a Windows-targeted desktop application wi
 a backend-authoritative Flask API, one SQLite database per Book Project,
 project-relative file storage, and a React/TypeScript client.
 
-The target architecture also includes a dedicated mobile client for Android phones
-and tablets, large-screen and foldable Android devices, iPhone and iPad. Desktop
-and mobile are clients of the same governed Studio contracts and logical project
-source of truth; mobile is not an independent publishing system. The mobile client
-is a future architectural workstream, not a claim of current implementation or
-accepted release scope.
+A proposed extension envisions a dedicated mobile client for Android phones and
+tablets, large-screen and foldable Android devices, iPhone and iPad. If accepted,
+desktop and mobile would be clients of the same governed Studio contracts and
+logical project source of truth; mobile would not be an independent publishing
+system. Its canonical status is **PROPOSED / DEFERRED — NOT ACCEPTED**: this
+describes neither current implementation nor approved release scope.
 
 The backend API calls application services, which enforce application policy and
 domain rules, and services use repositories and external adapters. A mobile client
@@ -25,11 +25,26 @@ Canon, permissions, production state or persistence policy.
 
 ## 1.1 Proposed mobile architecture extension
 
-This section records a proposed architecture extension for review. The Bible DOCX
-was not present in the repository when this proposal was recorded; therefore this
-section does not claim that the Bible has been amended or that this extension has
-received Founder/Architecture acceptance. Reconcile it with the authoritative
-Bible before treating it as an accepted requirement.
+This section records a proposed architecture extension for review under the
+canonical status **PROPOSED / DEFERRED — NOT ACCEPTED**. The Bible DOCX was not
+present in the repository when this proposal was recorded; therefore this section
+does not claim that the Bible has been amended or that this extension has received
+Founder/Architecture acceptance. Do not infer missing Bible requirements or
+promote this proposal because supporting architecture exists in the repository.
+Reconcile it with the complete authoritative Bible before treating it as an
+accepted requirement.
+
+### Phase 1 compatibility guardrail (not mobile scope)
+
+Phase 1 must not implement an Android/iOS application, synchronization, mobile
+API, offline cache, conflict-resolution engine or mobile-specific authentication
+flow. It must not be blocked by those deferred capabilities.
+
+Phase 1 domain models, contracts and business rules should remain independent of
+desktop-specific UI concerns where reasonably required by the existing Foundation
+scope. Keep domain and service layers free of unnecessary dependencies on desktop
+views, navigation state or presentation components. This is a maintainability
+constraint, not authorization to add mobile abstractions, endpoints or features.
 
 ### Shared Studio contracts
 
@@ -119,7 +134,7 @@ These items are the Bible baseline, not claims of implementation:
 | Persistence | SQLite per project; explicit schema version; migrations; WAL only if accepted |
 | Frontend | React; TypeScript; Vite; React Router; Zustand or accepted state layer |
 | Desktop | Decision required in ADR-002 |
-| Mobile | First-class Android/iOS client; capability-adapted UI and shared Studio contracts; implementation and synchronization decisions deferred to ADR-009 |
+| Mobile | First-class Android/iOS client; PROPOSED / DEFERRED — NOT ACCEPTED; implementation and synchronization decisions deferred to ADR-009 and the post-Phase 1 gate |
 | Layout/renderer | Adapter boundary required; concrete renderer unresolved |
 | AI | Adapter boundary required; provider/model unresolved |
 | Upscaling | Adapter boundary required; provider unresolved |
