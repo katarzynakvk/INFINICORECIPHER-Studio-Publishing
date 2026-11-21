@@ -19,13 +19,19 @@
 - ZIP backup with database and manifest integrity evidence
 - Restore into a separate destination
 - Corrupt backup rejection
+- Typed Flask API envelopes for project health/list/create/open/close/rename/backup
+- Server-side project-library path enforcement
+- React application shell
+- Canonical 14-item Navigator
+- Truthful unavailable dashboard states
+- Project creation/opening Library workflow
 
 ## Acceptance status
 
 The first vertical slice is implemented and has focused passing tests. The full
 Phase 1 scope is not accepted. Remaining mandatory work includes:
 
-- Application shell and truthful navigator
+- Complete application shell context, breadcrumbs and notification center
 - Settings scopes
 - Canon revisions and approval foundations
 - Migration runner and migration interruption tests
