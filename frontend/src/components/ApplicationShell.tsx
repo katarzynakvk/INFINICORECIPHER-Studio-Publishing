@@ -8,34 +8,52 @@ export function ApplicationShell() {
 
   return (
     <div className="studio-shell">
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <aside className="global-navigator" aria-label="Global navigator">
-        <div className="brand">INFINICORECIPHER</div>
-        <nav>
+        <div className="brand">
+          <span className="brand-mark" aria-hidden="true">∞</span>
+          <div>
+            <strong>INFINICORECIPHER</strong>
+            <span>Studio Publishing</span>
+          </div>
+        </div>
+        <nav aria-label="Workspace and system">
           {NAVIGATOR_ITEMS.map((item) => item.available ? (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => isActive ? "navigator-item active" : "navigator-item"}
-            >
-              <span>{item.number}</span>
-              {item.label}
-            </NavLink>
+            <div key={item.path}>
+              {(item.number === "01" || item.number === "12") && (
+                <div className="navigator-heading">{item.number === "01" ? "Workspace" : "System"}</div>
+              )}
+              <NavLink
+                to={item.path}
+                className={({ isActive }) => isActive ? "navigator-item active" : "navigator-item"}
+              >
+                <span aria-hidden="true">{item.number}</span>
+                {item.label}
+              </NavLink>
+            </div>
           ) : (
-            <div key={item.path} className="navigator-item unavailable" aria-disabled="true">
-              <span>{item.number}</span>
-              {item.label}
-              <small>Unavailable</small>
+            <div key={item.path}>
+              {item.number === "12" && <div className="navigator-heading">System</div>}
+              <div className="navigator-item unavailable" aria-disabled="true">
+                <span aria-hidden="true">{item.number}</span>
+                {item.label}
+                <small>Unavailable</small>
+              </div>
             </div>
           ))}
         </nav>
       </aside>
-      <main className="studio-main">
+      <main className="studio-main" id="main-content" tabIndex={-1}>
         <header className="command-bar">
-          <div>
+          <div className="project-context">
+            <span className="context-label">Current project</span>
             <strong>{activeProject?.title ?? "No active project"}</strong>
             {activeProject && <small>{activeProject.book_id}</small>}
           </div>
-          <div className={`save-state ${saveState.toLowerCase()}`}>{saveState}</div>
+          <div className={`save-state ${saveState.toLowerCase()}`} role="status">
+            <span className="status-dot" aria-hidden="true" />
+            {saveState}
+          </div>
         </header>
         <section className="dashboard-content">
           <Outlet />

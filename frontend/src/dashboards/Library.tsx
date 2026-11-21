@@ -57,19 +57,26 @@ export function Library() {
   return (
     <div>
       <h1>Library</h1>
+      <p className="page-intro">Create and open your book projects from your local library.</p>
       {error && <div role="alert" className="error-state">{error}</div>}
-      <form onSubmit={createProject}>
-        <label htmlFor="project-title">Book title</label>
-        <input
-          id="project-title"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          required
-        />
-        <button type="submit">Create project</button>
-      </form>
+      <div className="panel">
+        <h2>Start a new project</h2>
+        <form className="create-form" onSubmit={createProject}>
+          <div className="field">
+            <label htmlFor="project-title">Book title</label>
+            <input
+              id="project-title"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              required
+            />
+          </div>
+          <button type="submit">Create project</button>
+        </form>
+      </div>
+      <h2 className="section-heading">Your projects</h2>
       {loading ? (
-        <div>Loading projects...</div>
+        <div role="status">Loading projects...</div>
       ) : projects.length === 0 ? (
         <div className="empty-state">No projects exist in this library.</div>
       ) : (
