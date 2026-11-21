@@ -8,7 +8,7 @@ export function Library() {
   const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState(false);
+  const busy = useProjectStore((state) => state.projectOperationBusy);
   const activeProject = useProjectStore((state) => state.activeProject);
   const setActiveProject = useProjectStore((state) => state.setActiveProject);
 
@@ -29,8 +29,7 @@ export function Library() {
 
   async function createProject(event: React.FormEvent) {
     event.preventDefault();
-    if (busy) return;
-    setBusy(true);
+    if (!useProjectStore.getState().beginProjectOperation()) return;
     setError(null);
     try {
       const data = await apiRequest<{ project: Project }>("/api/v1/projects", {
@@ -43,13 +42,12 @@ export function Library() {
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to create project");
     } finally {
-      setBusy(false);
+      useProjectStore.getState().endProjectOperation();
     }
   }
 
   async function openProject(project: Project) {
-    if (busy) return;
-    setBusy(true);
+    if (!useProjectStore.getState().beginProjectOperation()) return;
     try {
       const data = await apiRequest<{ project: Project }>("/api/v1/projects/open", {
         method: "POST",
@@ -60,13 +58,12 @@ export function Library() {
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to open project");
     } finally {
-      setBusy(false);
+      useProjectStore.getState().endProjectOperation();
     }
   }
 
   async function closeProject() {
-    if (busy) return;
-    setBusy(true);
+    if (!useProjectStore.getState().beginProjectOperation()) return;
     setError(null);
     try {
       const result = await apiRequest<{ closed: boolean }>("/api/v1/projects/close", { method: "POST" });
@@ -75,7 +72,7 @@ export function Library() {
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to close project");
     } finally {
-      setBusy(false);
+      useProjectStore.getState().endProjectOperation();
     }
   }
 

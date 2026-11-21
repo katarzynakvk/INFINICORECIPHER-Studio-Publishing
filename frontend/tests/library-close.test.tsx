@@ -29,6 +29,7 @@ describe("Library close project", () => {
   afterEach(() => {
     cleanup();
     useProjectStore.getState().setActiveProject(null);
+    useProjectStore.getState().endProjectOperation();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -61,5 +62,24 @@ describe("Library close project", () => {
     expect((await screen.findByRole("alert")).textContent).toContain("Close failed");
     expect(useProjectStore.getState().activeProject).toEqual(project);
     expect(screen.getByRole("button", { name: "Close project" })).toBeTruthy();
+  });
+
+  it("keeps lifecycle actions disabled if the Library is remounted during close", async () => {
+    useProjectStore.getState().setActiveProject(project);
+    let finishClose!: (value: ReturnType<typeof response>) => void;
+    vi.stubGlobal("fetch", vi.fn((path: string) =>
+      path.endsWith("/close")
+        ? new Promise<ReturnType<typeof response>>((resolve) => { finishClose = resolve; })
+        : Promise.resolve(response({ projects: [] })),
+    ));
+    const first = render(<Library />);
+    fireEvent.click(screen.getByRole("button", { name: "Close project" }));
+    first.unmount();
+    render(<Library />);
+    expect((screen.getByRole("button", { name: "Close project" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "Create project" }) as HTMLButtonElement).disabled).toBe(true);
+    finishClose(response({ closed: true }));
+    await waitFor(() => expect(useProjectStore.getState().projectOperationBusy).toBe(false));
+    expect(useProjectStore.getState().activeProject).toBeNull();
   });
 });

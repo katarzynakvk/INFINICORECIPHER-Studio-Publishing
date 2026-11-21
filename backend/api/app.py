@@ -1,7 +1,8 @@
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
-from flask import Flask, jsonify, request
+from flask import Flask, g, jsonify, request
 
 from backend.services.project_service import ProjectService
 from backend.services.settings_service import SettingsService
@@ -29,6 +30,17 @@ def create_app(projects_root: Path, service: ProjectService | None = None) -> Fl
     project_service = service or ProjectService()
     settings_service = SettingsService()
     canon_service = CanonService()
+    request_lock = Lock()
+
+    @app.before_request
+    def serialize_project_requests():
+        request_lock.acquire()
+        g.project_request_locked = True
+
+    @app.teardown_request
+    def release_project_request(_error):
+        if g.pop("project_request_locked", False):
+            request_lock.release()
 
     def project_payload(identity: Any, root: Path) -> dict[str, Any]:
         return {
