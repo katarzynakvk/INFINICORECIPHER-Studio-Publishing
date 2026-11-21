@@ -72,12 +72,11 @@ body {
   color: var(--shell-nav-text);
 }
 
-.global-navigator .brand {
-  padding: 8px 10px 22px;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  overflow-wrap: anywhere;
+.global-navigator .brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 8px 0 22px;
 }
 
 .global-navigator nav {
@@ -344,8 +343,8 @@ body {
     padding: var(--icc-space-12, 12px);
   }
 
-  .global-navigator .brand {
-    padding: 4px 8px 12px;
+  .global-navigator .brand-logo {
+    margin: 4px 0 12px;
   }
 
   .global-navigator nav {

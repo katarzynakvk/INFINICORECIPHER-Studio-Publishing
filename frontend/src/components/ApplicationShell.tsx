@@ -9,7 +9,11 @@ export function ApplicationShell() {
   return (
     <div className="studio-shell">
       <aside className="global-navigator" aria-label="Global navigator">
-        <div className="brand">INFINICORECIPHER</div>
+        <img
+          className="brand-logo"
+          src="/logo.svg"
+          alt="INFINICORECIPHER Studio Publishing"
+        />
         <nav>
           {NAVIGATOR_ITEMS.map((item) => item.available ? (
             <NavLink

@@ -71,6 +71,40 @@ The authority order is:
 
 Conversation history must never silently override Project Data or the Bible.
 
+### Proposed mobile-client architecture extension
+
+The repository contains a proposed mobile-client and synchronization architecture
+in `docs/architecture/ARCHITECTURE-BASELINE.md` and ADR-009. The authoritative
+Bible DOCX is not present in the repository; do not claim that the proposal amends
+the Bible or is formally accepted. Reconcile it with the Bible and obtain the
+required Founder/Architecture decision before treating it as binding scope.
+Its canonical status in every current-state document is
+`PROPOSED / DEFERRED — NOT ACCEPTED`. Do not infer missing Bible requirements and
+do not promote ADR-009 or the Mobile Client & Synchronization workstream from that
+status solely because supporting architecture has been added to the repository.
+
+The proposal describes a first-class Android/iOS client of shared Studio contracts
+and a single logical project source of truth, with explicit offline/synchronization
+state, governed conflict resolution, capability-adapted responsive interfaces and
+the same Canon and security rules as desktop. It does not choose a mobile framework,
+service topology, transport, cloud, conflict algorithm, offline-write policy or
+release scope. Do not invent these decisions or imply full feature parity.
+
+Mobile is a separate future roadmap workstream, not a numbered phase. Phase 1 must
+not implement an Android/iOS application, synchronization, mobile API, offline
+cache, conflict-resolution engine or mobile-specific authentication flow. Keep
+Phase 1 domain models, contracts and business rules independent of desktop-specific
+UI concerns where reasonably required by Foundation, without adding mobile
+abstractions or features.
+
+After Phase 1 is formally ACCEPTED, complete
+`docs/acceptance/MOBILE-ARCHITECTURE-GATE.md` as a separate checkpoint. Record
+architecture readiness and implementation scope independently. Do not begin
+mobile implementation until the complete Bible has been reconciled, the checkpoint
+has been completed and the relevant scope and architecture decisions have explicit
+authorized approval. This proposal does not relax the Phase 1 acceptance gate or
+the Phase 2 hard gate.
+
 If two requirements conflict:
 
 - do not invent a resolution;
@@ -886,6 +920,192 @@ Include real tests for:
 - API contracts.
 
 Phase 1 may not be ACCEPTED while SQLite resource leaks, teardown errors or locked temporary files remain.
+
+## Phase 1 reconciliation, completion and acceptance directive
+
+### Hard execution gate
+
+Do not begin Phase 2 — Manuscript & Planning until Phase 1 has one coherent,
+current, evidence-backed requirement state and has received formal acceptance.
+The immediate work is to reconcile, complete, test, verify and close Phase 1.
+
+No capability may be classified as both IMPLEMENTED and MISSING, COMPLETE and
+PARTIAL, TESTED and NOT_TESTED, or VERIFIED and unsupported by current evidence
+without an explicit reconciliation record explaining the remaining gap. Historical
+labels are not current evidence. Resolve contradictions using, in order:
+
+1. the authoritative Bible requirements;
+2. the current repository implementation;
+3. tests actually executed against that source;
+4. current evidence records.
+
+Do not choose the most optimistic status, infer implementation from file presence,
+infer execution from a test file, or treat a historical PASS as evidence for changed
+source. Preserve old states as history, not as competing current status.
+
+### Canonical requirement and gap registers
+
+Inspect all Phase 1 sources before reconciling status: Bible requirements,
+architecture documents and Lock, ADRs, audits, action matrices, capability maps,
+traceability matrices, acceptance documents, evidence registers, implementation,
+tests and prior test reports.
+
+Maintain one canonical Phase 1 Requirement Register at
+`docs/acceptance/PHASE-1-REQUIREMENT-REGISTER.md` and one authoritative Gap
+Register at `docs/acceptance/PHASE-1-GAP-REGISTER.md`, linked from the acceptance
+pack. For each requirement record its ID, Bible reference, capability, affected
+components and implementation paths, one current primary state, required test,
+latest evidence, blocker, acceptance condition and final status.
+
+Allowed requirement states are:
+
+```text
+MISSING
+SCAFFOLDED
+PARTIAL
+IMPLEMENTED
+TESTED
+VERIFIED
+ACCEPTED
+BLOCKED
+FAILED
+NOT_TESTED
+UNCERTAIN
+```
+
+After reconciliation, produce a definitive Phase 1 Gap Register as the controlled
+implementation backlog. Each gap must identify the affected requirement and Bible
+reference, files/components, current evidence, missing behavior, required
+implementation and tests, dependencies, blocker state and completion evidence.
+Do not use vague gaps such as "Foundation needs more testing."
+
+### Mandatory Phase 1 completion review
+
+Inspect and complete each applicable area below. A file, helper, route, UI entry or
+test existing is not proof that its capability works.
+
+1. **Database migrations:** verify creation, schema versioning, migration order,
+   existing-project migration, transaction boundaries, failure/rollback,
+   reopen, preservation of existing data and required idempotent startup.
+2. **Interruption and failure behavior:** exercise applicable database, file-write,
+   project create/update, backup/restore, index, staging/finalization and atomic
+   replacement interruptions. No interrupted operation may report false success;
+   state must remain consistent or recoverable.
+3. **Filesystem resilience:** test applicable missing files/directories, denied
+   writes, invalid destinations, traversal, partial/interrupted operations,
+   replacement failure, unexpected file changes, hash mismatch, stale references
+   and cleanup failure. Verify required atomic behavior with executed tests.
+4. **Project index and backup/restore:** establish the canonical index behavior
+   from the Bible and accepted architecture. Verify create → register → reopen →
+   backup → restore to a separate destination → discovery/registration, preserving
+   the original and consistency between files and index. Define collisions from
+   authoritative architecture; never silently overwrite an unrelated project,
+   corrupt the index, create conflicting identity, strand a project or claim
+   success while state disagrees.
+5. **Backup/restore:** verify the complete path: request, creation, validation,
+   restore to a separate location, open, database/files/references/hash checks and
+   index verification. Test failure paths. ZIP creation alone is not acceptance.
+6. **API contracts:** for each Phase 1 operation verify request, validation,
+   service, persistence, response and error contracts, frontend consumption and
+   contract tests. Resolve frontend/backend disagreement against the authoritative
+   domain architecture. Do not invent endpoints or rely on accidental response
+   shapes.
+7. **Application context and Navigator:** verify authoritative active-project
+   state, availability, route/dashboard, persistence and required loading, failure,
+   read-only and dirty/saved states. Verify the canonical 14-dashboard sequence,
+   project-required routes, future-phase unavailable states, invalid routes,
+   transitions/persistence and required unsaved-change protection. A listed
+   future dashboard is not an implemented capability. The frontend must not create
+   competing persistent truth.
+8. **Windows Foundation behavior:** audit Windows runtime assumptions and execute
+   applicable path/storage, directory creation, SQLite, replacement, backup,
+   restore, validation and startup/shell tests on a supported Windows environment.
+   If a required test has not run on Windows, record NOT_TESTED, never PASS based
+   only on another operating system.
+9. **Test environment:** restore reproducible backend, development, frontend and
+   test dependencies from repository configuration. Verify runtimes, fixtures and
+   build prerequisites. Record environment failures separately from product
+   failures; repair the environment instead of suppressing tests.
+
+### Phase 1 verification gates
+
+After repairing gaps, run and record the exact commands and actual results for:
+
+- the complete applicable backend gate: unit, integration, database, API contract,
+  storage integrity, backup/restore, interruption/failure and security/path tests;
+- the complete applicable frontend gate: build/type validation, shell, Navigator,
+  active project context, Settings, Canon Foundation UI, API client contracts and
+  loading/error/unavailable states;
+- the cross-layer Foundation path: start → load Library → create/open project →
+  establish authoritative context → navigate → persist Settings and governed
+  Canon state → close/reopen as applicable → verify project → backup and validate
+  → restore/open → verify database, files, references and index consistency.
+
+Use the repository's actual scripts and test framework. Do not invent commands,
+claim skipped or unavailable checks as PASS, or report behavior as verified unless
+it was executed.
+
+### Evidence and acceptance pack
+
+Update `docs/acceptance/EVIDENCE-REGISTER.md` with current-source evidence. Each
+acceptance-relevant entry must record evidence ID, requirement, component, source
+revision, environment, timestamp, exact command/suite, result, output/report path,
+related Gap ID and unresolved findings. Rerun affected checks after relevant code
+changes; stale evidence cannot certify changed source.
+
+Reconcile all Phase 1 documents after implementation. No current-state document
+may say MISSING when current verified evidence proves implementation, or VERIFIED
+or ACCEPTED when evidence contradicts it. Preserve such previous claims only as
+history. Before acceptance, produce/update the Phase 1 Requirement Register, Gap
+Register, Action Matrix, Capability Map, Bible Traceability Matrix, Evidence
+Register, test records, blocker register, applicable ADR status and
+`docs/acceptance/PHASE-1-ACCEPTANCE.md`. The final report must explicitly evaluate
+repository, database/migrations, Project Service/index, application context,
+Navigator, Settings, Canon, storage/file operations, backup/restore, API contracts,
+backend/frontend/integration/interruption tests, Windows verification, evidence,
+open defects and blockers.
+
+The Building Agent may establish technical verification but may not manufacture
+Founder Acceptance. Use these phase states accurately:
+
+- `IN_PROGRESS` while required work remains without a hard blocker;
+- `BLOCKED` while a mandatory blocker remains;
+- `VERIFIED — AWAITING HUMAN ACCEPTANCE` when all machine-verifiable criteria pass
+  but authorized human acceptance is still required;
+- `ACCEPTED` only after explicit authorized acceptance.
+
+Never mark Phase 1 ACCEPTED merely to unlock Phase 2.
+
+### Deferred decisions and execution order
+
+Do not force decisions earlier than their dependent capability requires. AI
+provider, renderer and KDP decisions must not block unrelated Foundation work;
+resolve them when their relevant implementation is active. The desktop-shell
+decision may remain open during backend/frontend Foundation work if it is not a
+blocker, but must be formally resolved before final application packaging.
+
+Execute in this order:
+
+```text
+Phase 1 documentation reconciliation
+→ canonical Requirement Register
+→ definitive Gap Register
+→ complete mandatory Phase 1 implementation
+→ restore reproducible test environment
+→ focused tests for repaired components
+→ full backend gate
+→ full frontend gate
+→ integrated Foundation verification
+→ update current evidence
+→ reconcile final documentation and acceptance pack
+→ obtain formal Phase 1 acceptance
+→ only then begin Phase 2
+```
+
+Do not modify Phase 2 functionality, package the final application with unresolved
+desktop-shell architecture, or make AI/renderer/KDP decisions solely to close
+Phase 1 unless current evidence proves a specific Phase 1 requirement depends on
+that decision.
 
 ---
 
@@ -1801,7 +2021,9 @@ VERIFIED
 ACCEPTED
 ```
 
-Only ACCEPTED unlocks the next phase unless an accepted dependency decision permits limited parallel work.
+Only formal `ACCEPTED` unlocks the next phase. No Phase 2 implementation may
+proceed while Phase 1 is IN_PROGRESS, BLOCKED, FAILED, NOT_TESTED or VERIFIED —
+AWAITING HUMAN ACCEPTANCE.
 
 ---
 
