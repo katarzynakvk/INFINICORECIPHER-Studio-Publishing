@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" role="img" aria-labelledby="title">
+  <title id="title">INFINICORECIPHER Studio Publishing</title>
+  <rect width="640" height="160" fill="#fff"/>
+  <g fill="none" stroke="#ad8134" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M119 88C92 61 54 51 35 68 13 87 23 119 47 124c24 5 46-13 72-36 29-25 55-42 78-31 25 12 23 47-2 62-23 14-50 2-76-23Z" stroke-width="9"/>
+    <path d="M118 83C97 61 73 43 48 39l-5 14c27 2 51 15 75 37M120 83c22-23 46-41 72-45l5 14c-28 3-53 16-77 38" stroke-width="5"/>
+    <path d="M51 53 38 50l3-12 15 3M187 53l13-3-3-12-15 3" stroke-width="5"/>
+  </g>
+  <path d="M46 69c22 2 44 14 67 34" fill="none" stroke="#b53b31" stroke-linecap="round" stroke-width="2"/>
+  <path d="M193 69c-22 2-44 14-67 34" fill="none" stroke="#b53b31" stroke-linecap="round" stroke-width="2"/>
+  <text x="226" y="86" fill="#172231" font-family="Georgia, 'Times New Roman', serif" font-size="35" font-weight="700" letter-spacing="1.5">INFINICORECIPHER</text>
+  <text x="294" y="133" fill="#172231" font-family="Georgia, 'Times New Roman', serif" font-size="29" font-style="italic" letter-spacing="1.2">Studio Publishing</text>
+</svg>

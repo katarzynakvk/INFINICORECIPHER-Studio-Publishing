@@ -26,6 +26,7 @@ describe("ApplicationShell", () => {
         </Routes>
       </MemoryRouter>,
     );
+    expect(screen.getByRole("img", { name: "INFINICORECIPHER Studio Publishing" })).toBeTruthy();
     expect(screen.getAllByText("Library").length).toBeGreaterThan(0);
     expect(screen.getByText("Canon & Visual DNA")).toBeTruthy();
     expect(screen.getAllByText("Unavailable").length).toBeGreaterThan(0);

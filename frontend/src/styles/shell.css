@@ -4,7 +4,7 @@ button, input, select { font: inherit; }
 .studio-shell { min-height: 100vh; display: grid; grid-template-columns: var(--nav-width) 1fr; }
 .global-navigator { background: #172231; color: #fff; padding: 20px 12px; }
 .global-navigator nav { display: flex; flex-direction: column; gap: 2px; }
-.brand { font-size: 13px; letter-spacing: 0.12em; padding: 8px 10px 22px; }
+.brand-logo { display: block; width: 100%; height: auto; margin: 8px 0 22px; }
 .navigator-item { color: #dce4ee; text-decoration: none; display: grid; grid-template-columns: 34px 1fr; padding: 9px 10px; border-radius: 4px; }
 .navigator-item span { color: #93a4b8; }
 .navigator-item.active { background: #315a93; color: #fff; }
